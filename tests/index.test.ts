@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 
-import { ib } from "~/.";
+import { ib } from "../src";
 
 describe("ib", () => {
   it("should work (it does not)", async () => {
