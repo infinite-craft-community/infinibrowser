@@ -220,6 +220,6 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
 
 export const API_URL = "https://infinibrowser.wiki/api";
 
-export const DEFAULT_OPTIONS = { API_URL, timeout: 1000 } as const;
+export const DEFAULT_OPTIONS = { API_URL: API_URL as typeof API_URL, timeout: 1000 } as const;
 
-export const ib = new Infinibrowser(DEFAULT_OPTIONS);
+export const ib: Infinibrowser<"https://infinibrowser.wiki/api", 1000> = new Infinibrowser(DEFAULT_OPTIONS);
