@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "isolatedDeclarations": true,
 
     "target": "esnext",
     "module": "esnext",
@@ -8,8 +9,6 @@
     "moduleDetection": "force",
 
     "rootDir": "./",
-
-    "paths": { "~/*": ["./src/*"] },
 
     "skipLibCheck": true,
 
