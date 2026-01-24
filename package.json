@@ -2,43 +2,46 @@
   "name": "infinibrowser",
   "version": "0.7.0",
   "description": "A TypeScript wrapper for the Infinibrowser API",
-  "type": "module",
-  "author": "GameRoMan",
-  "license": "MIT",
   "keywords": [
-    "infinibrowser",
     "api",
-    "typescript",
-    "wrapper",
-    "bun",
-    "infinite",
-    "craft",
-    "infinite-craft",
-    "infinite craft",
     "browser",
+    "bun",
+    "client",
+    "craft",
     "database",
+    "infinibrowser",
+    "infinite",
+    "infinite craft",
+    "infinite-craft",
     "tools",
-    "client"
+    "typescript",
+    "wrapper"
   ],
-  "scripts": {
-    "build": "bunx --bun tsdown",
-    "test": "bun test",
-    "npm:publish": "bun publish"
+  "license": "MIT",
+  "author": "GameRoMan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infinite-craft-community/infinibrowser.git"
   },
   "files": [
-    "dist/**/*",
     "README.md",
-    "LICENSE"
+    "dist/**/*"
   ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "type": "module",
   "types": "./dist/index.d.mts",
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
   },
+  "scripts": {
+    "build": "bunx --bun tsdown",
+    "test": "bun test",
+    "format": "oxfmt --list-different || oxfmt",
+    "prepublishOnly": "bun run build"
+  },
   "devDependencies": {
-    "tsdown": "^0.18.1",
+    "oxfmt": "^0.26.0",
+    "tsdown": "^0.20.1",
     "typescript": "^5.9.3"
   }
 }

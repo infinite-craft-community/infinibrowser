@@ -89,10 +89,7 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
     return new Infinibrowser({ ...this.$config, ...config });
   }
 
-  async #fetchWithTimeout<T, E = unknown>(
-    url: URL,
-    init: RequestInit = {},
-  ): FetchResponse<T, E> {
+  async #fetchWithTimeout<T, E = unknown>(url: URL, init: RequestInit = {}): FetchResponse<T, E> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.$config.timeout);
 
@@ -177,18 +174,14 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
     });
   }
 
-  async getCustomLineage(
-    id: string,
-  ): FetchResponse<LineageDataType, InvalidElementId> {
+  async getCustomLineage(id: string): FetchResponse<LineageDataType, InvalidElementId> {
     return this.#get<CustomLineageDataType, InvalidElementId>({
       path: "/recipe/custom",
       params: { id },
     });
   }
 
-  async optimizeLineage(
-    id: string,
-  ): FetchResponse<{
+  async optimizeLineage(id: string): FetchResponse<{
     readonly id: string;
     readonly before: number;
     readonly after: number;
@@ -203,9 +196,7 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
     });
   }
 
-  async shareLineage(
-    steps: ShareLineageType,
-  ): FetchResponse<{ readonly id: string }> {
+  async shareLineage(steps: ShareLineageType): FetchResponse<{ readonly id: string }> {
     const path = "/analytics/share";
 
     const lastStep = steps.at(-1);
@@ -222,4 +213,6 @@ export const API_URL = "https://infinibrowser.wiki/api";
 
 export const DEFAULT_OPTIONS = { API_URL: API_URL as typeof API_URL, timeout: 1000 } as const;
 
-export const ib: Infinibrowser<"https://infinibrowser.wiki/api", 1000> = new Infinibrowser(DEFAULT_OPTIONS);
+export const ib: Infinibrowser<"https://infinibrowser.wiki/api", 1000> = new Infinibrowser(
+  DEFAULT_OPTIONS,
+);
