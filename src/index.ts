@@ -1,3 +1,3 @@
-export * from "./client";
+export { Infinibrowser, API_URL, ib } from "./client";
 
-export * from "./types";
+export type * from "./types/data";

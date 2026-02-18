@@ -1,9 +1,9 @@
 export interface UknownElement {
-  code: 404;
-  message: "Unknown element";
+  readonly code: 404;
+  readonly message: "Unknown element";
 }
 
 export interface InvalidElementId {
-  code: 400;
-  message: "Invalid element ID";
+  readonly code: 400;
+  readonly message: "Invalid element ID";
 }

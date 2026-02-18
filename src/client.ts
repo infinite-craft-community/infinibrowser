@@ -1,13 +1,12 @@
 import type {
+  CustomLineageDataType,
   ItemDataType,
+  LineageDataType,
   RecipesDataType,
   UsesDataType,
-  LineageDataType,
-  CustomLineageDataType,
   ShareLineageType,
-  UknownElement,
-  InvalidElementId,
-} from "./types";
+} from "./types/data";
+import type { InvalidElementId, UknownElement } from "./types/errors";
 
 type Params = Record<string, string | number | boolean | null | undefined>;
 
@@ -43,9 +42,9 @@ function mergeRequests(...requests: (RequestInit | undefined)[]): RequestInit {
   return mergedResult;
 }
 
-interface InfinibrowserConfig<TApiUrl extends string, TTimeOut extends number> {
-  readonly API_URL: TApiUrl;
-  readonly timeout: TTimeOut;
+interface InfinibrowserConfig {
+  readonly API_URL: string;
+  readonly timeout: number;
   readonly request?: Readonly<RequestInit>;
 }
 
@@ -63,33 +62,18 @@ type FetchResponse<T, E = unknown> = Promise<
   | FetchResponseError
 >;
 
-function handleError(error: unknown): FetchResponseError {
-  if (error instanceof SyntaxError) {
-    return { ok: false, error_code: "SYNTAX_ERROR", error } as const;
-  }
-  if (error instanceof DOMException) {
-    if (error.name === "AbortError") {
-      return { ok: false, error_code: "TIMEOUT", error } as const;
-    }
-    return { ok: false, error_code: "UNKNOWN_ERROR", error } as const;
-  }
-  return { ok: false, error_code: "UNKNOWN_ERROR", error } as const;
-}
+const API_URL = "https://infinibrowser.wiki/api";
 
-export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
-  public readonly $config: InfinibrowserConfig<TApiUrl, TTimeOut>;
+const DEFAULT_OPTIONS = { API_URL, timeout: 1000 };
 
-  constructor(config: InfinibrowserConfig<TApiUrl, TTimeOut>) {
-    this.$config = config;
+class Infinibrowser {
+  public readonly $config: InfinibrowserConfig;
+
+  constructor(config?: Partial<InfinibrowserConfig>) {
+    this.$config = { ...DEFAULT_OPTIONS, ...config };
   }
 
-  $refined<TApiUrl extends string, TTimeOut extends number>(
-    config: InfinibrowserConfig<TApiUrl, TTimeOut>,
-  ): Infinibrowser<TApiUrl, TTimeOut> {
-    return new Infinibrowser({ ...this.$config, ...config });
-  }
-
-  async #fetchWithTimeout<T, E = unknown>(url: URL, init: RequestInit = {}): FetchResponse<T, E> {
+  async #fetchWithTimeout<T, E = unknown>(url: URL, init?: RequestInit): FetchResponse<T, E> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.$config.timeout);
 
@@ -110,7 +94,13 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
       const data: T = JSON.parse(text);
       return { ok, data, response } as const;
     } catch (error) {
-      return handleError(error);
+      if (error instanceof SyntaxError) {
+        return { ok: false, error_code: "SYNTAX_ERROR", error } as const;
+      }
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return { ok: false, error_code: "TIMEOUT", error } as const;
+      }
+      return { ok: false, error_code: "UNKNOWN_ERROR", error } as const;
     } finally {
       clearTimeout(timeout);
     }
@@ -174,7 +164,7 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
     });
   }
 
-  async getCustomLineage(id: string): FetchResponse<LineageDataType, InvalidElementId> {
+  async getCustomLineage(id: string): FetchResponse<CustomLineageDataType, InvalidElementId> {
     return this.#get<CustomLineageDataType, InvalidElementId>({
       path: "/recipe/custom",
       params: { id },
@@ -209,10 +199,6 @@ export class Infinibrowser<TApiUrl extends string, TTimeOut extends number> {
   }
 }
 
-export const API_URL = "https://infinibrowser.wiki/api";
+const ib: Infinibrowser = new Infinibrowser(DEFAULT_OPTIONS);
 
-export const DEFAULT_OPTIONS = { API_URL: API_URL as typeof API_URL, timeout: 1000 } as const;
-
-export const ib: Infinibrowser<"https://infinibrowser.wiki/api", 1000> = new Infinibrowser(
-  DEFAULT_OPTIONS,
-);
+export { ib, API_URL, Infinibrowser };
