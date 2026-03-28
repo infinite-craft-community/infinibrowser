@@ -24,24 +24,26 @@
     "url": "git+https://github.com/infinite-craft-community/infinibrowser.git"
   },
   "files": [
-    "README.md",
-    "dist/**/*"
+    "dist"
   ],
   "type": "module",
-  "types": "./dist/index.d.mts",
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
   },
   "scripts": {
+    "lint": "oxlint",
+    "format": "oxfmt",
     "build": "bunx --bun tsdown",
     "test": "bun test",
-    "format": "oxfmt --list-different || oxfmt",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
-    "oxfmt": "^0.33.0",
-    "tsdown": "^0.20.3",
-    "typescript": "^5.9.3"
+    "@gameroman/config": "^0.0.5",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.18.1",
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2"
   }
 }

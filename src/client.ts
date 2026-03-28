@@ -73,7 +73,10 @@ class Infinibrowser {
     this.$config = { ...DEFAULT_OPTIONS, ...config };
   }
 
-  async #fetchWithTimeout<T, E = unknown>(url: URL, init?: RequestInit): FetchResponse<T, E> {
+  async #fetchWithTimeout<T, E = unknown>(
+    url: URL,
+    init?: RequestInit,
+  ): FetchResponse<T, E> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.$config.timeout);
 
@@ -164,7 +167,9 @@ class Infinibrowser {
     });
   }
 
-  async getCustomLineage(id: string): FetchResponse<CustomLineageDataType, InvalidElementId> {
+  async getCustomLineage(
+    id: string,
+  ): FetchResponse<CustomLineageDataType, InvalidElementId> {
     return this.#get<CustomLineageDataType, InvalidElementId>({
       path: "/recipe/custom",
       params: { id },
@@ -186,7 +191,9 @@ class Infinibrowser {
     });
   }
 
-  async shareLineage(steps: ShareLineageType): FetchResponse<{ readonly id: string }> {
+  async shareLineage(
+    steps: ShareLineageType,
+  ): FetchResponse<{ readonly id: string }> {
     const path = "/analytics/share";
 
     const lastStep = steps.at(-1);
