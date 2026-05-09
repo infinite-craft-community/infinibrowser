@@ -1,6 +1,6 @@
 {
   "name": "infinibrowser",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A TypeScript wrapper for the Infinibrowser API",
   "keywords": [
     "api",
