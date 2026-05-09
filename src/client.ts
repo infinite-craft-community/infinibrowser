@@ -16,20 +16,20 @@ import type {
 import type {
   InvalidElementIdError,
   NotSoFastError,
-  UknownElementError,
+  UnknownElementError,
 } from "./types/errors";
 
 const API_URL = "https://infinibrowser.wiki/api";
 
-type ItemResponseData = FetchResponseData<ItemDataType, UknownElementError>;
+type ItemResponseData = FetchResponseData<ItemDataType, UnknownElementError>;
 type RecipesResponseData = FetchResponseData<
   RecipesDataType,
-  UknownElementError
+  UnknownElementError
 >;
-type UsesResponseData = FetchResponseData<UsesDataType, UknownElementError>;
+type UsesResponseData = FetchResponseData<UsesDataType, UnknownElementError>;
 type LineageResponseData = FetchResponseData<
   LineageDataType,
-  UknownElementError | NotSoFastError
+  UnknownElementError | NotSoFastError
 >;
 
 const DEFAULT_OPTIONS: ApiConfig = { API_URL, timeout: 1000 } as const;
@@ -60,7 +60,7 @@ class Infinibrowser {
   }
 
   async getItem(id: string): Promise<ItemResponseData> {
-    return this.#get<ItemDataType, UknownElementError>({
+    return this.#get<ItemDataType, UnknownElementError>({
       path: "/item",
       params: { id },
     });
@@ -70,7 +70,7 @@ class Infinibrowser {
     id: string,
     { offset = 0 }: { offset?: number } = {},
   ): Promise<RecipesResponseData> {
-    return this.#get<RecipesDataType, UknownElementError>({
+    return this.#get<RecipesDataType, UnknownElementError>({
       path: "/recipes",
       params: { id, offset },
     });
@@ -80,7 +80,7 @@ class Infinibrowser {
     id: string,
     { offset = 0 }: { offset?: number } = {},
   ): Promise<UsesResponseData> {
-    return this.#get<UsesDataType, UknownElementError>({
+    return this.#get<UsesDataType, UnknownElementError>({
       path: "/uses",
       params: { id, offset },
     });
@@ -88,8 +88,8 @@ class Infinibrowser {
 
   async getLineage(
     id: string,
-  ): FetchResponse<LineageDataType, UknownElementError | NotSoFastError> {
-    return this.#get<LineageDataType, UknownElementError | NotSoFastError>({
+  ): FetchResponse<LineageDataType, UnknownElementError | NotSoFastError> {
+    return this.#get<LineageDataType, UnknownElementError | NotSoFastError>({
       path: "/recipe",
       params: { id },
     });
