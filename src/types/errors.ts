@@ -1,9 +1,17 @@
-export interface UknownElement {
-  readonly code: 404;
-  readonly message: "Unknown element";
-}
+type InfinibrowserError<Code extends number, Message extends string> = {
+  readonly code: Code;
+  readonly message: Message;
+};
 
-export interface InvalidElementId {
-  readonly code: 400;
-  readonly message: "Invalid element ID";
-}
+type UknownElementError = InfinibrowserError<404, "Unknown element">;
+
+type InvalidElementIdError = InfinibrowserError<400, "Invalid element ID">;
+
+type NotSoFastError = InfinibrowserError<429, "Not so fast!">;
+
+export type {
+  InfinibrowserError,
+  UknownElementError,
+  InvalidElementIdError,
+  NotSoFastError,
+};
