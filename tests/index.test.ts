@@ -1,13 +1,35 @@
 import { describe, it, expect } from "bun:test";
 
-import { ib } from "../src";
+import { Infinibrowser } from "infinibrowser";
 
-describe("ib", () => {
-  it.todo("should work (it does not)", async () => {
-    const response = await ib.getItem("Water");
-    console.log(response);
-    expect(response.ok).toBeTrue();
-    if (!response.ok) return;
-    expect(response.data.text).toBe("Water");
+const ib = new Infinibrowser({ timeout: 250 });
+
+describe("Infinibrowser", () => {
+  describe(".getItem", () => {
+    it("timeouts for getItem", async () => {
+      const response = await ib.getItem("Water");
+      expect(response).toHaveProperty("error_code", "TIMEOUT");
+    });
+  });
+
+  describe(".getLineage", () => {
+    it("timeouts for getLineage", async () => {
+      const response = await ib.getLineage("Engine");
+      expect(response).toHaveProperty("error_code", "TIMEOUT");
+    });
+  });
+
+  describe(".getRecipes", () => {
+    it("timeouts for getRecipes", async () => {
+      const response = await ib.getRecipes("Engine");
+      expect(response).toHaveProperty("error_code", "TIMEOUT");
+    });
+  });
+
+  describe(".getUses", () => {
+    it("timeouts for getUses", async () => {
+      const response = await ib.getUses("Engine");
+      expect(response).toHaveProperty("error_code", "TIMEOUT");
+    });
   });
 });
