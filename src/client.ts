@@ -10,11 +10,11 @@ import type { InvalidElementId, UknownElement } from "./types/errors";
 
 type Params = Record<string, string | number | boolean | null | undefined>;
 
-const buildUrl = (options: {
+function buildUrl(options: {
   readonly API_URL: string;
   readonly path: string;
   readonly params?: Params;
-}): URL => {
+}): URL {
   const url = new URL(`${options.API_URL}${options.path}`);
 
   if (options.params) {
@@ -26,7 +26,7 @@ const buildUrl = (options: {
   }
 
   return url;
-};
+}
 
 function mergeRequests(...requests: (RequestInit | undefined)[]): RequestInit {
   let mergedResult: RequestInit = {};
@@ -209,3 +209,4 @@ class Infinibrowser {
 const ib: Infinibrowser = new Infinibrowser(DEFAULT_OPTIONS);
 
 export { ib, API_URL, Infinibrowser };
+export type { FetchResponse, FetchResponseError, InfinibrowserConfig };
