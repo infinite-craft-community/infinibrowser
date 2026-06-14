@@ -9,9 +9,12 @@ type InvalidElementIdError = InfinibrowserError<400, "Invalid element ID">;
 
 type NotSoFastError = InfinibrowserError<429, "Not so fast!">;
 
+type InternalServerError = InfinibrowserError<500, "Internal Server Error">;
+
 export type {
   InfinibrowserError,
   UnknownElementError,
   InvalidElementIdError,
   NotSoFastError,
+  InternalServerError,
 };

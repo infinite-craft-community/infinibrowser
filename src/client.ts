@@ -14,6 +14,7 @@ import type {
   ShareLineageType,
 } from "./types/data";
 import type {
+  InternalServerError,
   InvalidElementIdError,
   NotSoFastError,
   UnknownElementError,
@@ -27,9 +28,14 @@ type RecipesResponseData = FetchResponseData<
   UnknownElementError
 >;
 type UsesResponseData = FetchResponseData<UsesDataType, UnknownElementError>;
+
+type LineageResponseError =
+  | UnknownElementError
+  | NotSoFastError
+  | InternalServerError;
 type LineageResponseData = FetchResponseData<
   LineageDataType,
-  UnknownElementError | NotSoFastError
+  LineageResponseError
 >;
 
 const DEFAULT_OPTIONS: ApiConfig = { API_URL, timeout: 1000 } as const;
@@ -86,10 +92,8 @@ class Infinibrowser {
     });
   }
 
-  async getLineage(
-    id: string,
-  ): FetchResponse<LineageDataType, UnknownElementError | NotSoFastError> {
-    return this.#get<LineageDataType, UnknownElementError | NotSoFastError>({
+  async getLineage(id: string): Promise<LineageResponseData> {
+    return this.#get<LineageDataType, LineageResponseError>({
       path: "/recipe",
       params: { id },
     });
@@ -142,4 +146,5 @@ export type {
   UsesResponseData,
   ItemResponseData,
   LineageResponseData,
+  LineageResponseError,
 };
