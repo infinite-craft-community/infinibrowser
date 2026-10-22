@@ -126,7 +126,7 @@ class Infinibrowser {
 
   async shareLineage(
     steps: ShareLineageType,
-    missing?: LineageMissingInfo,
+    missing: LineageMissingInfo = {},
   ): FetchResponse<{ readonly id: string }> {
     const path = "/analytics/share";
 

@@ -221,8 +221,11 @@ describe("Infinibrowser", () => {
 
       const result = fixtures.shareSteps[0]?.[2];
       const body = JSON.parse(request?.body ?? "null");
-      expect(body).toEqual({ ...result, steps: fixtures.shareSteps });
-      expect(body).not.toHaveProperty("missing");
+      expect(body).toEqual({
+        ...result,
+        steps: fixtures.shareSteps,
+        missing: {},
+      });
 
       expect(response.ok).toBe(true);
       expect(response).toHaveProperty("data", fixtures.share);
