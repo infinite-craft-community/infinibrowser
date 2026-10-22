@@ -18,11 +18,12 @@ interface LoggedRequest {
 
 type RouteHandler = (req: Request, url: URL) => Response | Promise<Response>;
 
-const CUSTOM_LINEAGE_ID = "01m5ggt5j8x281sr8eqqbtd69f";
+const CUSTOM_LINEAGE_ID = "01m5gjh4ydcvnv1fbrvzwyc65z";
 
 const water: ElementType = { id: "Water", emoji: "💧" };
 const fire: ElementType = { id: "Fire", emoji: "🔥" };
 const steam: ElementType = { id: "Steam", emoji: "🌫️" };
+const engine: ElementType = { id: "Engine", emoji: "🚗" };
 
 const fixtures = {
   item: {
@@ -46,10 +47,10 @@ const fixtures = {
     missing: {},
   } satisfies LineageDataType,
   customLineage: {
-    steps: [{ a: fire, b: water, result: steam }],
-    missing: { Steam: "loop" },
+    steps: [{ a: fire, b: steam, result: engine }],
+    missing: { [steam.id]: "no_recipe" },
   } satisfies CustomLineageDataType,
-  shareSteps: [[water, fire, steam]] satisfies ShareLineageType,
+  shareSteps: [[fire, steam, engine]] satisfies ShareLineageType,
   share: { id: CUSTOM_LINEAGE_ID },
 };
 
