@@ -12,6 +12,7 @@ import type {
   RecipesDataType,
   UsesDataType,
   ShareLineageType,
+  LineageMissingInfo,
 } from "./types/data";
 import type {
   InternalServerError,
@@ -125,14 +126,15 @@ class Infinibrowser {
 
   async shareLineage(
     steps: ShareLineageType,
+    missing: LineageMissingInfo = {},
   ): FetchResponse<{ readonly id: string }> {
     const path = "/analytics/share";
 
     const lastStep = steps.at(-1);
     if (!lastStep) throw new Error("Lineage must not be empty");
 
-    const resultElement = lastStep[2];
-    const payload = { ...resultElement, steps };
+    const { id, emoji } = lastStep[2];
+    const payload = { id, emoji, steps, missing };
 
     return this.#post<{ readonly id: string }>({ path }, payload);
   }

@@ -41,9 +41,11 @@ interface UsesDataType {
   readonly uses: UseType[];
 }
 
+type LineageMissingInfo = Record<string, "loop" | "no_recipe">;
+
 interface LineageDataType {
   readonly steps: LineageType;
-  readonly missing: Record<string, "loop" | (string & {})>;
+  readonly missing: LineageMissingInfo;
 }
 
 type CustomLineageDataType = LineageDataType;
@@ -59,6 +61,7 @@ export type {
   ItemDataType,
   RecipesDataType,
   UsesDataType,
+  LineageMissingInfo,
   LineageDataType,
   CustomLineageDataType,
 };
