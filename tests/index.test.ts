@@ -13,7 +13,7 @@ import {
   setRoute,
   startMockServer,
   stopMockServer,
-} from "./mockServer";
+} from "./mock-server";
 
 let API_URL = "";
 let ib: Infinibrowser;
@@ -96,6 +96,31 @@ describe("Infinibrowser", () => {
       expect(response.ok).toBe(true);
       expect(response).toHaveProperty("data", fixtures.lineage);
     });
+
+    it("returns NOT_OK with the error data when ratelimited", async () => {
+      const notSoFast = { code: 429 as const, message: "Not so fast!" };
+      setRoute("/recipe", () => Response.json(notSoFast, { status: 429 }));
+
+      const response = await ib.getLineage("Engine");
+
+      expect(response).toHaveProperty("ok", false);
+      expect(response).toHaveProperty("error_code", "NOT_OK");
+      expect(response).toHaveProperty("data", notSoFast);
+    });
+
+    it("returns NOT_OK with the error data on upstream error", async () => {
+      const internalError = {
+        code: 500 as const,
+        message: "Internal Server Error",
+      };
+      setRoute("/recipe", () => Response.json(internalError, { status: 500 }));
+
+      const response = await ib.getLineage("Engine");
+
+      expect(response).toHaveProperty("ok", false);
+      expect(response).toHaveProperty("error_code", "NOT_OK");
+      expect(response).toHaveProperty("data", internalError);
+    });
   });
 
   describe(".getCustomLineage", () => {
@@ -104,6 +129,50 @@ describe("Infinibrowser", () => {
 
       expect(response.ok).toBe(true);
       expect(response).toHaveProperty("data", fixtures.customLineage);
+    });
+
+    it("requests a shared lineage by its id", async () => {
+      const shareResponse = await ib.shareLineage(fixtures.shareSteps);
+      expect(shareResponse.ok).toBe(true);
+      if (!shareResponse.ok) return;
+
+      const response = await ib.getCustomLineage(shareResponse.data.id);
+
+      const [shareRequest, request] = getLog();
+      expect(shareRequest?.method).toBe("POST");
+      expect(shareRequest?.path).toBe("/api/analytics/share");
+      expect(request?.method).toBe("GET");
+      expect(request?.path).toBe("/api/recipe/custom");
+      expect(new URL(request?.url ?? "").searchParams.get("id")).toBe(
+        shareResponse.data.id,
+      );
+
+      expect(response.ok).toBe(true);
+      expect(response).toHaveProperty("data", fixtures.customLineage);
+    });
+
+    it("returns NOT_OK with the error data on an invalid element id", async () => {
+      const invalidId = { code: 400 as const, message: "Invalid element ID" };
+      setRoute("/recipe/custom", () =>
+        Response.json(invalidId, { status: 400 }),
+      );
+
+      const response = await ib.getCustomLineage(fixtures.share.id);
+
+      expect(response).toHaveProperty("ok", false);
+      expect(response).toHaveProperty("error_code", "NOT_OK");
+      expect(response).toHaveProperty("data", invalidId);
+    });
+
+    it("returns the custom lineage data with no missing recipes", async () => {
+      setRoute("/recipe/custom", () =>
+        Response.json({ ...fixtures.customLineage, missing: {} }),
+      );
+
+      const response = await ib.getCustomLineage(fixtures.share.id);
+
+      expect(response.ok).toBe(true);
+      expect(response).toHaveProperty("data.missing", {});
     });
   });
 
@@ -153,9 +222,29 @@ describe("Infinibrowser", () => {
       const result = fixtures.shareSteps[0]?.[2];
       const body = JSON.parse(request?.body ?? "null");
       expect(body).toEqual({ ...result, steps: fixtures.shareSteps });
+      expect(body).not.toHaveProperty("missing");
 
       expect(response.ok).toBe(true);
       expect(response).toHaveProperty("data", fixtures.share);
+    });
+
+    it("posts the missing recipes map with the lineage steps", async () => {
+      await ib.shareLineage(
+        fixtures.shareSteps,
+        fixtures.customLineage.missing,
+      );
+
+      const [request] = getLog();
+      expect(request?.method).toBe("POST");
+      expect(request?.path).toBe("/api/analytics/share");
+
+      const result = fixtures.shareSteps[0]?.[2];
+      const body = JSON.parse(request?.body ?? "null");
+      expect(body).toEqual({
+        ...result,
+        steps: fixtures.shareSteps,
+        missing: fixtures.customLineage.missing,
+      });
     });
   });
 

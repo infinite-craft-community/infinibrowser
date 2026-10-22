@@ -35,7 +35,7 @@
     "lint": "oxlint",
     "format": "oxfmt",
     "build": "bunx --bun tsdown",
-    "test": "bun test",
+    "test": "bun test --dots",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
